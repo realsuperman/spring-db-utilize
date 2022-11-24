@@ -5,15 +5,21 @@ import hello.itemservice.repository.ItemSearchCond;
 import hello.itemservice.repository.ItemUpdateDto;
 import hello.itemservice.repository.memory.MemoryItemRepository;
 import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.DefaultTransactionDefinition;
 
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@SpringBootTest
+@Transactional // 테스트에 쓰면 테스트를 트랜잭션 안에서 실행하고, 테스트가 끝나면 트랜잭션을 자동으로 롤백함
+@SpringBootTest // 정확히 말하면 해당 어노테이션은 @SpringBootApplication가 달려있는 곳을 찾음 그리고 해당 파일을 설정으로 삼는다
 class ItemRepositoryTest {
 
     @Autowired
@@ -59,7 +65,7 @@ class ItemRepositoryTest {
     }
 
     @Test
-    void findItems() {
+    void findItems() { // 테스트에서 가장 중요한건 격리성이다
         //given
         Item item1 = new Item("itemA-1", 10000, 10);
         Item item2 = new Item("itemA-2", 20000, 20);
@@ -68,6 +74,7 @@ class ItemRepositoryTest {
         itemRepository.save(item1);
         itemRepository.save(item2);
         itemRepository.save(item3);
+        // Item DB에는 값이 없다고 생각하고 테스트하고 싶지만 지금은 격리되어 있지 않음(기존값 그대로 들어가 있어서 에러터짐)
 
         //둘 다 없음 검증
         test(null, null, item1, item2, item3);
