@@ -15,8 +15,11 @@ import java.util.List;
 import java.util.Optional;
 
 @Slf4j
-@Repository
+@Repository // 컴포넌트 스캔 대상이면서 + 예외 변환 AOP 적용대상
 @Transactional
+// 만약 em이 JPA 예외던지면 AOP Proxy가 스프링예외로 변환해줌
+// 이렇게 작동하려면 @Repository가 필요하다
+// 참고로 JPA 그래들에 등록시 관련 AOP도 가지고옴
 public class JpaItemRepository implements ItemRepository {
     private final EntityManager em;
 
